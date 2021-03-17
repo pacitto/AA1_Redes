@@ -1,8 +1,14 @@
 ﻿  Main.cpp
-C:\Users\pc\source\repos\AA1_Redes\AA1_Redes\Main.cpp(61,40): warning C4267: 'inicializando': conversión de 'size_t' a 'int'; posible pérdida de datos
-C:\Users\pc\source\repos\AA1_Redes\AA1_Redes\Main.cpp(129,82): warning C4244: 'argumento': conversión de 'float' a 'sf::Int32'; posible pérdida de datos
+C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(148,27): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(153,44): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(170,45): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(195,30): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(200,47): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(233,82): warning C4244: 'argumento': conversión de 'float' a 'sf::Int32'; posible pérdida de datos
+C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(418,31): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
   Generando código
-  Previous IPDB not found, fall back to full compilation.
-  All 243 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  2 of 599 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
   Generación de código finalizada
-  AA1_Redes.vcxproj -> C:\Users\pc\source\repos\AA1_Redes\x64\Release\AA1_Redes.exe
+  AA1_Redes.vcxproj -> C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\x64\Release\AA1_Redes.exe
