@@ -59,6 +59,87 @@ void InitializeDeck(std::vector<Card>* deck)
 	}
 }
 //Crear función para dar un número de cartas aleatorias del deck a los jugadores
+void DealCards(std::vector<Card> deck, std::vector<Card>* hand, int numPlayers, int playerId)
+{
+	int i = 1; 
+	int random; 
+	while (!deck.empty())
+	{
+		random = rand() % deck.size(); 
+		Card newCard = deck[random]; 
+
+		if (i == playerId)
+		{
+			hand->push_back(newCard); 
+		}
+		
+		deck.erase(deck.begin() + random);
+
+		i++; 
+		if (i > numPlayers)
+		{
+			i = 1; 
+		}
+
+	}
+}
+
+//enseñar cartas por familias y si hay una familia completa dar el punto al jugador
+void ShowHand(std::vector<Card> hand)
+{
+	std::string culture, family; 
+	for (int i = 0; i < hand.size(); i++)
+	{
+		switch (hand[i].culture) {
+		case Culture::ARAB:
+			culture = "Arab";
+			break;
+		case Culture::BANTU:
+			culture = "Bantu";
+			break;
+		case Culture::CHINA:
+			culture = "China";
+			break;
+		case Culture::ESQUIMAL:
+			culture = "Esquimal";
+			break;
+		case Culture::INDIA:
+			culture = "India";
+			break;
+		case Culture::MEXICAN:
+			culture = "Mexican";
+			break;
+		case Culture::TIROLESE:
+			culture = "Tirolese";
+			break;
+		default: break;
+		}
+
+		switch (hand[i].family) {
+		case Family::DAUGHTER:
+			family = "Daughter";
+			break;
+		case Family::FATHER:
+			family = "Father";
+			break;
+		case Family::GRANDFATHER:
+			family = "Grandfather";
+			break;
+		case Family::GRANDMOTHER:
+			family = "Grandmother";
+			break;
+		case Family::MOTHER:
+			family = "Mother";
+			break;
+		case Family::SON:
+			family = "Son";
+			break;
+		default: break;
+		}
+		
+		std::cout << i + 1 << ". " << family << " from " << culture << std::endl; 
+	}
+}
 
 void ControlServidor()   
 {
@@ -253,6 +334,7 @@ void ControlClient() {
 	int playerNum = 0; 
 	int numPlayers = 0; 
 	std::vector<Player> players;
+	Player playerInfo; 
 	sf::Packet packet;
 	//Mientras se tenga una conexión con el servidor se compartiran los datos de login para entrar a la partida deseada
 	while (waiting)
@@ -432,6 +514,9 @@ void ControlClient() {
 
 	}
 
+	DealCards(deck, &playerInfo.hand, numPlayers, playerNum);
+	ShowHand(playerInfo.hand);
+	
 	//Si eres el que crea la sala, envia a los otros peers su numero (indicando su orden en la partida)
 	if (playerNum == 1) 
 	{
