@@ -1,14 +1,6 @@
-﻿  Main.cpp
-C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(231,27): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
-C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(236,44): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
-C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(253,45): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
-C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(278,30): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
-C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(283,47): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
-C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(316,82): warning C4244: 'argumento': conversión de 'float' a 'sf::Int32'; posible pérdida de datos
-C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(508,31): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
-  Generando código
-  6 of 623 functions ( 1.0%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    17 functions had inline decision re-evaluated but remain unchanged
-  Generación de código finalizada
-  AA1_Redes.vcxproj -> C:\Users\pc\source\repos\PracticaRedes\AA1_Redes\AA1_Redes\x64\Release\AA1_Redes.exe
+﻿  Generating code
+  1 of 625 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  AA1_Redes.vcxproj -> C:\Users\USER\Documents\ENTI UB\ENTI20211\Redes 2\Repositories\AA1_Redes\AA1_Redes\x64\Release\AA1_Redes.exe
