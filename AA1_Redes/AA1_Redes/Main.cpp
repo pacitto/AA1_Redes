@@ -3,7 +3,7 @@
 #include <list>
 
 enum Commands {LOG_IN, CREATE_ROOM, JOIN_ROOM, ASK_ROOM, CHOOSE_ROOM, FIRST_PEER, CONNECT_TO }; //comandos para comunicación
-enum Headers {PEER_NUM, READY, PLAYER_ORD};
+enum Headers {PEER_NUM, READY, PLAYER_ORD, PLAYER_AN, PLAYER_RES};
 enum Culture {ARAB, BANTU, CHINA, ESQUIMAL, INDIA, MEXICAN, TIROLESE};
 enum Family {GRANDFATHER, GRANDMOTHER, FATHER, MOTHER, SON, DAUGHTER};
 
@@ -96,6 +96,91 @@ void DealCards(std::vector<Card> deck, std::vector<Card>* hand, int numPlayers, 
 		}
 
 	}
+}
+
+//returns score absed on number of cards held
+int GetScore(std::vector<Card> deck) {
+
+	int score = 0;
+	int numArab = 0;
+	int numBantu = 0;
+	int numChina = 0;
+	int numEsquimal = 0;
+	int numIndia = 0;
+	int numMexican = 0;
+	int numTirolese = 0;
+
+	for (auto it = deck.begin(); it != deck.end(); it++) {
+		Card c = *it;
+		if (c.culture == Culture::ARAB) {
+			numArab++;
+		}
+		if (c.culture == Culture::BANTU) {
+			numBantu++;
+		}
+		if (c.culture == Culture::CHINA) {
+			numChina++;
+		}
+		if (c.culture == Culture::ESQUIMAL) {
+			numEsquimal++;
+		}
+		if (c.culture == Culture::INDIA) {
+			numIndia++;
+		}
+		if (c.culture == Culture::MEXICAN) {
+			numMexican++;
+		}
+		if (c.culture == Culture::TIROLESE) {
+			numTirolese++;
+		}
+	}
+
+	if (numArab == 6) {
+		score++;
+	}
+	if (numBantu == 6) {
+		score++;
+	}
+	if (numChina == 6) {
+		score++;
+	}
+	if (numEsquimal == 6) {
+		score++;
+	}
+	if (numIndia == 6) {
+		score++;
+	}
+	if (numMexican == 6) {
+		score++;
+	}
+	if (numTirolese == 6) {
+		score++;
+	}
+
+	return score;
+}
+
+//Adds card to deck
+std::vector<Card> AddCard(std::vector<Card> deck, int cult, int fam) {
+	deck.push_back(Card{ 0, (Culture)cult, (Family)fam });
+	return deck;
+}
+
+//Removes card from deck
+std::vector<Card> RemoveCard(std::vector<Card> deck, int cult, int fam) {
+
+	bool foundCard = false;
+	for (auto it = deck.begin(); it != deck.end(); it++) {
+		
+		Card c = *it;
+		if (c.culture == (Culture)cult and c.family == (Family)fam) {
+			// erase this element, and get an iterator to the new next one
+			it = deck.erase(it);
+
+		}
+
+	}
+	return deck;
 }
 
 //enseñar cartas por familias y si hay una familia completa dar el punto al jugador
@@ -530,6 +615,7 @@ void ControlClient() {
 
 	DealCards(deck, &playerInfo.hand, numPlayers, playerNum);
 	ShowHand(playerInfo.hand);
+	players[playerNum - 1].hand = playerInfo.hand;
 	
 	if (Ready()) {
 		packet.clear();
@@ -601,95 +687,147 @@ void ControlClient() {
 				//Añadir los cases necesarios para conseguir la comunicacion entre peers durante la partida
 				switch (header) {
 				case Headers::PEER_NUM: {
-					packet >> aux; 
-					std::cout << "Player number " << aux << std::endl;
+					packet >> aux;
 					if (playerNum == aux + 1)
 					{
 						std::cout << "You are player number " << playerNum << std::endl;
-						packet.clear();
-						packet << static_cast<int32_t>(Headers::PEER_NUM) << playerNum;
-						for (int i = 0; i < players.size(); i++)
-						{
-							players[i].socket->send(packet);
+						if (playerNum > players.size()) {
+							//std::cout << "Current turn: Player number 1" << std::endl;
+							packet.clear();
+							packet << static_cast<int32_t>(Headers::PLAYER_ORD) << 0;
+							for (int i = 0; i < players.size(); i++)
+							{
+								players[i].socket->send(packet);
+							}
+							std::cout << "Current turn: Player number 1" << std::endl;
 						}
-						
+						else
+						{
+							packet.clear();
+							packet << static_cast<int32_t>(Headers::PEER_NUM) << playerNum;
+							for (int i = 0; i < players.size(); i++)
+							{
+								players[i].socket->send(packet);
+							}
+						}
 					}
-					//if (playerNum == players.size() + 1) {
-						//std::cout << "Current turn: Player number 1" << std::endl;
-						packet.clear();
-						packet << static_cast<int32_t>(Headers::PLAYER_ORD) << 0;
-						for (int i = 0; i < players.size(); i++)
-						{
-							players[i].socket->send(packet);
-						}
-					//}
-				
+
 					break;
 				}
-				case Headers::PLAYER_ORD:{
-				packet >> aux;
-				if (playerNum == aux + 1) {
-					std::cout << "Your turn" << std::endl;
-					std::cout << "Which player to ask for card: " << std::endl;
+				case Headers::PLAYER_ORD: {
+					packet >> aux;
+					if (playerNum == aux + 1) {
+						int score = GetScore(p.hand);
+						int whichPlayer = -1;
+						int whichCulture = -1;
+						int whichMember = -1;
+						if (score == 7) {
+							//end game, player wins
+						}
 
-					std::cout << "Which culture?" << std::endl;
+						std::cout << "Your turn" << std::endl;
+						std::cout << "Your score is: " << score << std::endl;
 
-					std::cout << "Which family member?" << std::endl;
+						while (whichPlayer <= 0 || whichPlayer > numPlayers || whichPlayer==playerNum) {
+							std::cout << "Which player to ask for card? (introduce player number)" << std::endl;
+							std::cin >> whichPlayer;
+						}
+
+						while (whichCulture <= 0 || whichCulture > 7) {
+							std::cout << "Which culture? (1.ARAB  2.BANTU  3.CHINA  4.ESQUIMAL  5.INDIA  6.MEXICAN  7.TIROLESE)" << std::endl;
+							std::cin >> whichCulture;
+						}
+
+						while (whichMember <= 0 || whichMember > 6) {
+							std::cout << "Which family member? (1.GRANDFATHER  2.GRANDMOTHER  3.FATHER  4.MOTHER  5.SON  6.DAUGHTER)" << std::endl;
+							std::cin >> whichMember;
+						}
+						packet.clear();
+						packet << static_cast<int32_t>(Headers::PLAYER_AN) << whichPlayer << whichCulture << whichMember << playerNum;
+						players[whichPlayer-2].socket->send(packet);
+
+					}
+					else {
+						std::cout << "Current turn: Player number " << aux + 1 << std::endl;
+					}
+					break;
 				}
-				else {
-					std::cout << "Current turn: Player number " << aux + 1<< std::endl;
+				case Headers::PLAYER_AN: {
+
+					packet >> aux;
+					//int whichPlayer = -1;
+					int whichCulture = -1;
+					int whichMember = -1;
+					int answer = -1;
+					int playerResponding = -1;
+
+					packet >> whichCulture;
+					packet >> whichMember;
+					packet >> playerResponding;
+
+					while (answer < 0 || answer>1) {
+						std::cout << "Player " << playerResponding << " asks:" << std::endl;
+						std::cout << "Do you have this card? First number: (1.ARAB  2.BANTU  3.CHINA  4.ESQUIMAL  5.INDIA  6.MEXICAN  7.TIROLESE)" << std::endl;
+						std::cout << "Second number:(1.GRANDFATHER  2.GRANDMOTHER  3.FATHER  4.MOTHER  5.SON  6.DAUGHTER) Write 0 for no or 1 for yes" << std::endl;
+						std::cout << "First number: " << whichCulture << " second number: " << whichMember << std::endl;
+						std::cin >> answer;
+					}
+
+					if (answer == 1) {
+						std::cout << "Your hand is now:" << std::endl;
+						players[playerNum - 1].hand = RemoveCard(players[playerNum-1].hand, whichCulture-1, whichMember-1);
+						ShowHand(players[playerNum-1].hand);
+					}
+
+					packet.clear();
+					packet << static_cast<int32_t>(Headers::PLAYER_RES) << answer << whichCulture << whichMember;
+					players[playerResponding-1].socket->send(packet);
+
+					break;
 				}
-				break;
-			    }
+				case Headers::PLAYER_RES: {
+
+					int whichCulture = -1;
+					int whichMember = -1;
+					int answer = -1;
+
+					packet >> answer;
+					packet >> whichCulture;
+					packet >> whichMember;
+
+					std::cout << "Your hand is now:" << std::endl;
+					players[playerNum - 1].hand = AddCard(players[playerNum - 1].hand, whichCulture - 1, whichMember - 1);
+					ShowHand(players[playerNum - 1].hand);
+
+					packet.clear();
+					packet << static_cast<int32_t>(Headers::PLAYER_ORD) << playerNum;
+					for (int i = 0; i < players.size(); i++)
+					{
+						players[i].socket->send(packet);
+					}
+					
+
+					break;
+				}
 				default: break;
 				}
 			}
 			else if (status == sf::Socket::Disconnected)
 			{
+				numPlayers--;
 				std::cout << "A player has disconnected" <<std::endl; 
 				p.socket->disconnect(); 
-			}
-		}
-
-		/*if (status == sf::Socket::Done)
-		{
-			if (header == Headers::PLAYER_ORD) {
-				packet >> aux;
-				if (playerNum == aux + 1) {
-					std::cout << "Your turn" << std::endl;
-				}
-				else {
-					std::cout << "Current turn: Player number " << aux << std::endl;
+				if (numPlayers <= 2) {
+					std::cout << "Less than 3 players, match is over" << std::endl;
+					exit(3);
 				}
 			}
 		}
-		else {
-			std::cout << "A player has disconnected" << std::endl;
-			socket.disconnect();
-		}*/
+
+		
 		
 
 	}
-
-	
-		
-	/*if (status == sf::Socket::Done) {
-		Headers header;
-		packet >> aux;
-		std::cout << aux << std::endl;
-		if (playerNum == aux + 1) {
-			std::cout << "Your turn" << std::endl;
-		}
-		else {
-			std::cout << "Current turn: Player number " << aux << std::endl;
-		}
-	}
-	else if (status == sf::Socket::Disconnected)
-	{
-		std::cout << "A player has disconnected" << std::endl;
-		socket.disconnect();
-	}*/
-	
 
 	socket.disconnect();
 }
