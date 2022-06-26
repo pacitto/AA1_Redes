@@ -2,34 +2,115 @@
 #include <iostream>
 #include <list>
 
+/*
+* ENUMS
+*/
+
+//Conexión
 enum Commands {LOG_IN, CREATE_ROOM, JOIN_ROOM, ASK_ROOM, CHOOSE_ROOM, FIRST_PEER, CONNECT_TO }; //comandos para comunicación
 enum Headers {PEER_NUM, READY, PLAYER_ORD, PLAYER_AN, PLAYER_RES};
-enum Culture {ARAB, BANTU, CHINA, ESQUIMAL, INDIA, MEXICAN, TIROLESE};
-enum Family {GRANDFATHER, GRANDMOTHER, FATHER, MOTHER, SON, DAUGHTER};
+
+/*
+* TO DO: ENUM COLOR, ENUM TYPE, ENUM STATE
+*/
+enum COLOR {RED, BLUE, YELLOW, GREEN, RAINBOW};
+enum TYPE {ORGAN, VIRUS, VACCINE, TREATMENT};
+enum STATE {HEALTHY, INFECTED, INMUNE, PROTECTED};
+enum TREATMENT_TYPE {INFECTION, ORGAN_THIEF, TRANSPLANT, LATEX_GLOVE, MEDICAL_ERROR};
 
 struct ConnectionInfo {
 	int port;
 	std::string ip;
 	sf::TcpSocket* socket; 
 };
+
 //Struct para carta con constructor
 struct Card {
-	int id;
-	Culture culture;
-	Family family;
 
-	Card(int _id, Culture _culture, Family _family)
+	COLOR color; //COLOR
+	TYPE type; //TIPO
+	STATE state; //ESTAT
+	TREATMENT_TYPE treatment_type; //TRATAMIENTO
+	std::string name;
+
+	Card(COLOR _color, TYPE _type, TREATMENT_TYPE _tt)
 	{
-		id = _id;
-		culture = _culture;
-		family = _family; 
+		color = _color;
+		type = _type;
+		treatment_type = _tt;
+
+		setType();
+	}
+
+	void setType() {
+		switch (type) {
+			case TYPE::ORGAN:
+				name = "Organ ";
+				setColor();
+				break;
+			case TYPE::TREATMENT:
+				name = "Treatment ";
+				switch (treatment_type)
+				{
+				case TREATMENT_TYPE::INFECTION:
+					name += "infection";
+					break;
+				case TREATMENT_TYPE::LATEX_GLOVE:
+					name += "latex glove";
+					break;
+				case TREATMENT_TYPE::MEDICAL_ERROR:
+					name += "medical error";
+					break;
+				case TREATMENT_TYPE::ORGAN_THIEF:
+					name += "organ thief";
+					break;
+				case TREATMENT_TYPE::TRANSPLANT:
+					name += "transplant";
+					break;
+				default:
+					break;
+				}
+				break;
+			case TYPE::VACCINE:
+				name = "Vaccine ";
+				setColor();
+				break;
+			case TYPE::VIRUS:
+				name = "Virus ";
+				setColor();
+				break;
+			default: 
+				break;
+		}
+	}
+	void setColor() {
+		switch (color) {
+			case COLOR::BLUE:
+				name += "blue ";
+				break;
+			case COLOR::GREEN:
+				name += "green ";
+				break;
+			case COLOR::RED:
+				name += "red ";
+				break;
+			case COLOR::YELLOW:
+				name += "yellow ";
+				break;
+			case COLOR::RAINBOW:
+				name += "rainbow ";
+				break;
+			default:
+				break;
+		}
 	}
 };
 //struct de player con un vector de cartas para guardar su mano
 struct Player {
 	sf::TcpSocket* socket;
 	int id;
-	std::vector<Card> hand; 
+	std::vector<Card> hand;
+	std::vector<Card> table;
 };
 struct Room {
 	std::string id;
@@ -48,14 +129,37 @@ struct Room {
 };
 
 //Incialización de la baraja de cartas
+//TO DO: INICIALIZAR DECK CON TODAS LAS CARTAS
 void InitializeDeck(std::vector<Card>* deck)
 {
-	for (int i = 0; i < 7; i++)
-	{
-		for (int j = 0; j < 6; j++)
-		{
-			deck->push_back(Card{(j + 1)+(i * 6), (Culture)i, (Family)j});
+	//Rainbow
+	deck->push_back(Card{ COLOR::RAINBOW, TYPE::ORGAN, (TREATMENT_TYPE)0 });
+	deck->push_back(Card{ COLOR::RAINBOW, TYPE::VIRUS, (TREATMENT_TYPE)0 });
+	for(int i = 0; i < 4; i++)
+		deck->push_back(Card{ COLOR::RAINBOW, TYPE::VACCINE, (TREATMENT_TYPE)0 });
+	//Virus y Vacunas
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			deck->push_back(Card{ (COLOR)j, TYPE::VACCINE, (TREATMENT_TYPE)0 });
+			deck->push_back(Card{ (COLOR)j, TYPE::VIRUS, (TREATMENT_TYPE)0 });
 		}
+	}
+	//Organos
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 4; j++) {
+			deck->push_back(Card{ (COLOR)j, TYPE::ORGAN, (TREATMENT_TYPE)0 });
+		}
+	}
+	//Tratamientos
+	for (int i = 0; i < 2; i++)
+		deck->push_back(Card{ COLOR::RAINBOW, TYPE::TREATMENT, TREATMENT_TYPE::INFECTION });
+	for (int i = 0; i < 3; i++) {
+		deck->push_back(Card{ COLOR::RAINBOW, TYPE::TREATMENT, TREATMENT_TYPE::ORGAN_THIEF });
+		deck->push_back(Card{ COLOR::RAINBOW, TYPE::TREATMENT, TREATMENT_TYPE::TRANSPLANT });
+	}
+	for (int i = 0; i < 1; i++) {
+		deck->push_back(Card{ COLOR::RAINBOW, TYPE::TREATMENT, TREATMENT_TYPE::LATEX_GLOVE });
+		deck->push_back(Card{ COLOR::RAINBOW, TYPE::TREATMENT, TREATMENT_TYPE::MEDICAL_ERROR });
 	}
 }
 
@@ -73,11 +177,16 @@ bool Ready() {
 }
 
 //Crear función para dar un número de cartas aleatorias del deck a los jugadores
+
+/*
+* TO DO: UTILIZAR SEED PARA EL RANDOM Y CAMBIAR LÓGICA DE REPARTO
+*/
 void DealCards(std::vector<Card> deck, std::vector<Card>* hand, int numPlayers, int playerId)
 {
 	int i = 1; 
-	int random; 
-	while (!deck.empty())
+	int random;
+
+	while (hand->size() < 3)
 	{
 		random = rand() % deck.size(); 
 		Card newCard = deck[random]; 
@@ -94,11 +203,10 @@ void DealCards(std::vector<Card> deck, std::vector<Card>* hand, int numPlayers, 
 		{
 			i = 1; 
 		}
-
 	}
 }
 
-//returns score absed on number of cards held
+//returns score based on number of cards held
 int GetScore(std::vector<Card> deck) {
 
 	int score = 0;
@@ -110,30 +218,30 @@ int GetScore(std::vector<Card> deck) {
 	int numMexican = 0;
 	int numTirolese = 0;
 
-	for (auto it = deck.begin(); it != deck.end(); it++) {
-		Card c = *it;
-		if (c.culture == Culture::ARAB) {
-			numArab++;
-		}
-		if (c.culture == Culture::BANTU) {
-			numBantu++;
-		}
-		if (c.culture == Culture::CHINA) {
-			numChina++;
-		}
-		if (c.culture == Culture::ESQUIMAL) {
-			numEsquimal++;
-		}
-		if (c.culture == Culture::INDIA) {
-			numIndia++;
-		}
-		if (c.culture == Culture::MEXICAN) {
-			numMexican++;
-		}
-		if (c.culture == Culture::TIROLESE) {
-			numTirolese++;
-		}
-	}
+	//for (auto it = deck.begin(); it != deck.end(); it++) {
+	//	Card c = *it;
+	//	if (c.culture == Culture::ARAB) {
+	//		numArab++;
+	//	}
+	//	if (c.culture == Culture::BANTU) {
+	//		numBantu++;
+	//	}
+	//	if (c.culture == Culture::CHINA) {
+	//		numChina++;
+	//	}
+	//	if (c.culture == Culture::ESQUIMAL) {
+	//		numEsquimal++;
+	//	}
+	//	if (c.culture == Culture::INDIA) {
+	//		numIndia++;
+	//	}
+	//	if (c.culture == Culture::MEXICAN) {
+	//		numMexican++;
+	//	}
+	//	if (c.culture == Culture::TIROLESE) {
+	//		numTirolese++;
+	//	}
+	//}
 
 	if (numArab == 6) {
 		score++;
@@ -160,85 +268,45 @@ int GetScore(std::vector<Card> deck) {
 	return score;
 }
 
+
 //Adds card to deck
 std::vector<Card> AddCard(std::vector<Card> deck, int cult, int fam) {
-	deck.push_back(Card{ 0, (Culture)cult, (Family)fam });
+	//deck.push_back(Card{});
 	return deck;
 }
 
 //Removes card from deck
-std::vector<Card> RemoveCard(std::vector<Card> deck, int cult, int fam) {
+//std::vector<Card> RemoveCard(std::vector<Card> deck, int cult, int fam) {
+//
+//	bool foundCard = false;
+//	for (auto it = deck.begin(); it != deck.end(); it++) {
+//		
+//		Card c = *it;
+//		if (c.culture == (Culture)cult and c.family == (Family)fam) {
+//			// erase this element, and get an iterator to the new next one
+//			it = deck.erase(it);
+//
+//		}
+//
+//	}
+//	return deck;
+//}
 
-	bool foundCard = false;
-	for (auto it = deck.begin(); it != deck.end(); it++) {
-		
-		Card c = *it;
-		if (c.culture == (Culture)cult and c.family == (Family)fam) {
-			// erase this element, and get an iterator to the new next one
-			it = deck.erase(it);
-
-		}
-
-	}
-	return deck;
-}
-
-//enseñar cartas por familias y si hay una familia completa dar el punto al jugador
+/// <summary>
+/// Imprimir por pantalla las cartas que tiene el jugador
+/// </summary>
+/// <param name="hand"> Mano del jugador </param>
 void ShowHand(std::vector<Card> hand)
 {
-	std::string culture, family; 
+	std::string color, type, treatment; 
 	for (int i = 0; i < hand.size(); i++)
 	{
-		switch (hand[i].culture) {
-		case Culture::ARAB:
-			culture = "Arab";
-			break;
-		case Culture::BANTU:
-			culture = "Bantu";
-			break;
-		case Culture::CHINA:
-			culture = "China";
-			break;
-		case Culture::ESQUIMAL:
-			culture = "Esquimal";
-			break;
-		case Culture::INDIA:
-			culture = "India";
-			break;
-		case Culture::MEXICAN:
-			culture = "Mexican";
-			break;
-		case Culture::TIROLESE:
-			culture = "Tirolese";
-			break;
-		default: break;
-		}
-
-		switch (hand[i].family) {
-		case Family::DAUGHTER:
-			family = "Daughter";
-			break;
-		case Family::FATHER:
-			family = "Father";
-			break;
-		case Family::GRANDFATHER:
-			family = "Grandfather";
-			break;
-		case Family::GRANDMOTHER:
-			family = "Grandmother";
-			break;
-		case Family::MOTHER:
-			family = "Mother";
-			break;
-		case Family::SON:
-			family = "Son";
-			break;
-		default: break;
-		}
 		
-		std::cout << i + 1 << ". " << family << " from " << culture << std::endl; 
+		std::cout << i + 1 << ". " << hand[i].name << std::endl; 
 	}
 }
+
+
 
 void ControlServidor()   
 {
@@ -462,9 +530,9 @@ void ControlClient() {
 						std::cout << "Enter the room name" << std::endl;
 						std::cin >> info;
 						packet << static_cast<int32_t> (Commands::CREATE_ROOM) << info;
-						std::cout << "Enter the number of players for the game (3 - 6)" << std::endl;
+						std::cout << "Enter the number of players for the game (2 - 4)" << std::endl;
 						std::cin >> aux;
-						while (aux < 3 || aux > 6)
+						while (aux < 2 || aux > 4)
 						{
 							std::cout << "Invalid input" << std::endl;
 							std::cin >> aux;
@@ -493,9 +561,9 @@ void ControlClient() {
 					std::cout << "Enter the room name" << std::endl; 
 					std::cin >> info; 
 					packet << static_cast<int32_t> (Commands::CREATE_ROOM) << info; 
-					std::cout << "Enter the number of players for the game (3 - 6)" << std::endl;
+					std::cout << "Enter the number of players for the game (2 - 4)" << std::endl;
 					std::cin >> aux; 
-					while (aux < 3 || aux > 6)
+					while (aux < 2 || aux > 4)
 					{
 						std::cout << "Invalid input" << std::endl;
 						std::cin >> aux;
@@ -612,10 +680,13 @@ void ControlClient() {
 		}
 
 	}
-
 	DealCards(deck, &playerInfo.hand, numPlayers, playerNum);
 	ShowHand(playerInfo.hand);
-	players[playerNum - 1].hand = playerInfo.hand;
+	if(!players[playerNum - 1].hand.empty())
+		players[playerNum - 1].hand.clear();
+	for (auto var : playerInfo.hand) {
+		players[playerNum - 1].hand.push_back(var);
+	}
 	
 	if (Ready()) {
 		packet.clear();
@@ -632,6 +703,7 @@ void ControlClient() {
 	bool ready = false;
 	int numready = 0;
 	while (!ready) {
+		
 		packet.clear();
 		for (auto it = players.begin(); it != players.end(); it++)
 		{
@@ -644,8 +716,9 @@ void ControlClient() {
 				if (aux == Headers::READY) {
 					numready++;
 				}
-				if (numready == players.size() - 1) {
+				if (numready == players.size()) {
 					ready = true;
+					std::cout << "READY" << std::endl;
 				}
 			}
 			else if (status == sf::Socket::Disconnected)
@@ -670,6 +743,8 @@ void ControlClient() {
 	}
 
 	bool connected = true;
+
+
 	//Loop de juego
 	while (connected)
 	{
@@ -775,7 +850,7 @@ void ControlClient() {
 
 					if (answer == 1) {
 						std::cout << "Your hand is now:" << std::endl;
-						players[playerNum - 1].hand = RemoveCard(players[playerNum-1].hand, whichCulture-1, whichMember-1);
+						//players[playerNum - 1].hand = RemoveCard(players[playerNum-1].hand, whichCulture-1, whichMember-1);
 						ShowHand(players[playerNum-1].hand);
 					}
 
@@ -823,16 +898,15 @@ void ControlClient() {
 				}
 			}
 		}
-
-		
-		
-
 	}
 
 	socket.disconnect();
 }
 
+void GameLoop() 
+{
 
+}
 
 int main()
 {

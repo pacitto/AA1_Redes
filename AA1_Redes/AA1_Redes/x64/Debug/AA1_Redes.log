@@ -1,3 +1,9 @@
 ﻿  Main.cpp
-MSVCRTD.lib(exe_main.obj) : error LNK2019: símbolo externo main sin resolver al que se hace referencia en la función "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
-C:\Users\pc\source\repos\AA1_Redes\x64\Debug\AA1_Redes.exe : fatal error LNK1120: 1 externos sin resolver
+C:\Users\adrij\Documents\GitHub\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(393,27): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\adrij\Documents\GitHub\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(398,44): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\adrij\Documents\GitHub\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(415,45): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\adrij\Documents\GitHub\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(440,30): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\adrij\Documents\GitHub\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(445,47): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\adrij\Documents\GitHub\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(478,82): warning C4244: 'argumento': conversión de 'float' a 'sf::Int32'; posible pérdida de datos
+C:\Users\adrij\Documents\GitHub\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(670,31): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+  AA1_Redes.vcxproj -> C:\Users\adrij\Documents\GitHub\AA1_Redes\AA1_Redes\x64\Debug\AA1_Redes.exe

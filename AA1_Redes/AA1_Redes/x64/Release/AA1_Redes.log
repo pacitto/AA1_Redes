@@ -1,14 +1,1 @@
-﻿  Main.cpp
-C:\Users\USER\Documents\ENTI UB\ENTI20211\Redes 2\Repositories\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(331,27): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\USER\Documents\ENTI UB\ENTI20211\Redes 2\Repositories\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(336,44): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\USER\Documents\ENTI UB\ENTI20211\Redes 2\Repositories\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(353,45): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\USER\Documents\ENTI UB\ENTI20211\Redes 2\Repositories\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(378,30): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\USER\Documents\ENTI UB\ENTI20211\Redes 2\Repositories\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(383,47): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\USER\Documents\ENTI UB\ENTI20211\Redes 2\Repositories\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(416,82): warning C4244: 'argument': conversion from 'float' to 'sf::Int32', possible loss of data
-C:\Users\USER\Documents\ENTI UB\ENTI20211\Redes 2\Repositories\AA1_Redes\AA1_Redes\AA1_Redes\Main.cpp(608,31): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-  Generating code
-  1 of 650 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  AA1_Redes.vcxproj -> C:\Users\USER\Documents\ENTI UB\ENTI20211\Redes 2\Repositories\AA1_Redes\AA1_Redes\x64\Release\AA1_Redes.exe
+﻿  AA1_Redes.vcxproj -> C:\Users\adrij\Documents\GitHub\AA1_Redes\AA1_Redes\x64\Release\AA1_Redes.exe
